@@ -1,0 +1,69 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Edit Membership</h2>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label class="form-label">Band</label>
+        <select name="bandid" class="form-select" required>
+
+            {% for band in bands %}
+            <option value="{{ band.BandID }}"
+                {% if band.BandID == membership.BandID %}
+                selected
+                {% endif %}>
+                {{ band.BandName }}
+            </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Member</label>
+        <select name="memberid" class="form-select" required>
+
+            {% for member in members %}
+            <option value="{{ member.MemberID }}"
+                {% if member.MemberID == membership.MemberID %}
+                selected
+                {% endif %}>
+                {{ member.MemberName }}
+            </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Role</label>
+        <input type="text" name="role"
+               class="form-control"
+               value="{{ membership.Role or '' }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Start Year</label>
+        <input type="number" name="startyear"
+               class="form-control"
+               value="{{ membership.StartYear or '' }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">End Year</label>
+        <input type="number" name="endyear"
+               class="form-control"
+               value="{{ membership.EndYear or '' }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save Membership
+    </button>
+
+</form>
+
+{% endblock %}

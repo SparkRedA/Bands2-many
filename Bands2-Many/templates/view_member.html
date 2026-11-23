@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ member.MemberName }}</h1>
+
+<p>
+    <strong>Main Position:</strong>
+    {{ member.MainPosition or 'Unknown' }}
+</p>
+
+<hr>
+
+<h3>Memberships</h3>
+
+{% for m in member.memberships %}
+
+<div class="card mb-3">
+    <div class="card-body">
+
+        <h4>
+            <a href="{{ url_for('view_band', id=m.band.BandID) }}">
+                {{ m.band.BandName }}
+            </a>
+        </h4>
+
+        <p>
+            <strong>Role:</strong>
+            {{ m.Role or member.MainPosition or 'Unknown' }}
+        </p>
+
+        <p>
+            <strong>Start Year:</strong>
+            {{ m.StartYear or 'Unknown' }}
+        </p>
+
+        <p>
+            <strong>End Year:</strong>
+            {{ m.EndYear or 'Present' }}
+        </p>
+
+        <a href="{{ url_for('edit_membership', id=m.MembershipID) }}"
+           class="btn btn-warning btn-sm">
+            Edit Membership
+        </a>
+
+        <form method="POST"
+              action="{{ url_for('delete_membership', id=m.MembershipID) }}"
+              class="d-inline">
+            <button type="submit" class="btn btn-danger btn-sm">
+                Delete Membership
+            </button>
+        </form>
+
+        <hr>
+
+        <h5>Albums During Membership</h5>
+
+        <ul>
+            {% for ba in m.band.band_albums %}
+                {% set album = ba.album %}
+
+                {% if album.ReleaseYear is not none
+                    and (m.StartYear is none or album.ReleaseYear >= m.StartYear)
+                    and (m.EndYear is none or album.ReleaseYear <= m.EndYear) %}
+
+                <li>
+                    {{ album.AlbumTitle }}
+                    ({{ album.ReleaseYear }})
+                </li>
+
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+    </div>
+</div>
+
+{% else %}
+<p>This member has no memberships.</p>
+{% endfor %}
+
+<a href="{{ url_for('view_by_member') }}" class="btn btn-secondary">
+    Back to Members
+</a>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Add Album</h2>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label class="form-label">Album Title</label>
+        <input type="text" name="albumtitle"
+               class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Release Year</label>
+        <input type="number" name="releaseyear"
+               class="form-control">
+    </div>
+
+    <h4>Select Bands</h4>
+
+    <p>
+        Select all bands that collaborated on this album.
+    </p>
+
+    {% for band in bands %}
+
+    <div class="form-check">
+        <input
+            type="checkbox"
+            class="form-check-input"
+            name="bandids"
+            value="{{ band.BandID }}"
+            id="band{{ band.BandID }}"
+        >
+
+        <label class="form-check-label"
+               for="band{{ band.BandID }}">
+            {{ band.BandName }}
+        </label>
+    </div>
+
+    {% else %}
+    <p>No bands available. Add a band first.</p>
+    {% endfor %}
+
+    <br>
+
+    <button type="submit" class="btn btn-primary">
+        Add Album
+    </button>
+
+</form>
+
+{% endblock %}

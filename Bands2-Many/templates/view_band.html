@@ -1,0 +1,84 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ band.BandName }}</h1>
+
+<p><strong>Formed Year:</strong> {{ band.FormedYear or 'Unknown' }}</p>
+<p><strong>Home Location:</strong> {{ band.HomeLocation or 'Unknown' }}</p>
+
+<hr>
+
+<h3>Members</h3>
+
+<ul>
+    {% for m in band.memberships %}
+    <li>
+        {{ m.member.MemberName }}
+        - {{ m.Role or m.member.MainPosition or 'Unknown role' }}
+
+        {% if m.StartYear %}
+            ({{ m.StartYear }} -
+            {{ m.EndYear if m.EndYear else 'Present' }})
+        {% endif %}
+
+        <a href="{{ url_for('edit_membership', id=m.MembershipID) }}">
+            Edit
+        </a>
+
+        <form method="POST"
+              action="{{ url_for('delete_membership', id=m.MembershipID) }}"
+              class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+                Delete
+            </button>
+        </form>
+    </li>
+    {% else %}
+    <li>No members assigned.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Albums</h3>
+
+<ul>
+    {% for ba in band.band_albums %}
+    <li>
+        <strong>
+            {{ ba.album.AlbumTitle }}
+            ({{ ba.album.ReleaseYear or 'Unknown year' }})
+        </strong>
+
+        {% set others = ba.album.band_albums
+            | rejectattr('BandID', 'equalto', band.BandID)
+            | list %}
+
+        {% if others %}
+            <p class="mb-1">Collaborating Bands:</p>
+
+            <ul>
+                {% for collaboration in others %}
+                <li>
+                    <a href="{{ url_for('view_band', id=collaboration.band.BandID) }}">
+                        {{ collaboration.band.BandName }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No other collaborating bands.</p>
+        {% endif %}
+    </li>
+    {% else %}
+    <li>No albums yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('view_by_band') }}" class="btn btn-secondary">
+    Back to Bands
+</a>
+
+{% endblock %}

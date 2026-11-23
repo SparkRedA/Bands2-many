@@ -1,0 +1,105 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>All Bands</h2>
+
+{% for band in bands %}
+
+<div class="card mb-4">
+    <div class="card-body">
+
+        <h3>
+            <a href="{{ url_for('view_band', id=band.BandID) }}">
+                {{ band.BandName }}
+            </a>
+        </h3>
+
+        <p><strong>Formed:</strong> {{ band.FormedYear or 'Unknown' }}</p>
+        <p><strong>Location:</strong> {{ band.HomeLocation or 'Unknown' }}</p>
+
+        <a class="btn btn-warning btn-sm"
+           href="{{ url_for('edit_band', id=band.BandID) }}">
+            Edit Band
+        </a>
+
+        <form method="POST"
+              action="{{ url_for('delete_band', id=band.BandID) }}"
+              class="d-inline"
+              onsubmit="return confirm('Delete this band?');">
+            <button type="submit" class="btn btn-danger btn-sm">
+                Delete Band
+            </button>
+        </form>
+
+        <hr>
+
+        <h4>Members</h4>
+
+        <ul>
+            {% for m in band.memberships %}
+            <li>
+                {{ m.member.MemberName }}
+                - {{ m.Role or m.member.MainPosition or 'Unknown role' }}
+
+                <a href="{{ url_for('edit_membership', id=m.MembershipID) }}">
+                    Edit
+                </a>
+
+                <form method="POST"
+                      action="{{ url_for('delete_membership', id=m.MembershipID) }}"
+                      class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Delete
+                    </button>
+                </form>
+            </li>
+            {% else %}
+            <li>No members yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Albums</h4>
+
+        <ul>
+            {% for ba in band.band_albums %}
+            <li>
+                <strong>
+                    {{ ba.album.AlbumTitle }}
+                    ({{ ba.album.ReleaseYear or 'Unknown year' }})
+                </strong>
+
+                {% set others = ba.album.band_albums
+                    | rejectattr('BandID', 'equalto', band.BandID)
+                    | list %}
+
+                {% if others %}
+                    <p class="mb-1">Collaborating Bands:</p>
+
+                    <ul>
+                        {% for collaboration in others %}
+                        <li>
+                            <a href="{{ url_for('view_band', id=collaboration.band.BandID) }}">
+                                {{ collaboration.band.BandName }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No other collaborating bands.</p>
+                {% endif %}
+            </li>
+            {% else %}
+            <li>No albums yet.</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+</div>
+
+{% else %}
+<p>No bands have been added yet.</p>
+{% endfor %}
+
+{% endblock %}

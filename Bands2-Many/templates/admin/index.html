@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Welcome to Bands 2</h1>
+
+<p>
+    Manage bands, members, memberships, and albums.
+</p>
+
+<a class="btn btn-primary" href="{{ url_for('view_by_band') }}">
+    View Bands
+</a>
+
+<a class="btn btn-secondary" href="{{ url_for('view_by_member') }}">
+    View Members
+</a>
+
+<a class="btn btn-success" href="{{ url_for('add_album') }}">
+    Add Album
+</a>
+
+{% endblock %}
